@@ -4,6 +4,11 @@
 
 # Caesar Cipher Application
 
+[![Java CI](https://github.com/Aberezhnoy1980/CryptAnalyzer/actions/workflows/build.yml/badge.svg)](https://github.com/Aberezhnoy1980/CryptAnalyzer/actions/workflows/build.yml)
+[![Java Version](https://img.shields.io/badge/Java-21-blue.svg)](https://openjdk.org/projects/jdk/21/)
+[![Maven](https://img.shields.io/badge/Maven-3.9%2B-orange.svg)](https://maven.apache.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 Профессиональная реализация шифра Цезаря с поддержкой нескольких режимов работы.
 
 ## Архитектурные решения
