@@ -105,7 +105,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.javarush.aberezhnoy.presentation.cli.CliApp</mainClass>
+                            <mainClass>ru.javarush.berezhnoy.presentation.cli.CliApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
