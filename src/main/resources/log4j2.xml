@@ -13,7 +13,7 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Root>
-        <Logger name="com.caesar" level="debug" additivity="false">
+        <Logger name="ru.javarush.aberezhnoy" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Logger>
