@@ -1,8 +1,7 @@
-package ru.javarush.aberezhnoy.domain.service;
+package ru.javarush.berezhnoy.domain.service;
 
 import org.junit.jupiter.api.Test;
 import ru.javarush.berezhnoy.domain.exception.CaesarCipherException;
-import ru.javarush.berezhnoy.domain.service.CipherService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
