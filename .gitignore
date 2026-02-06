@@ -39,3 +39,4 @@ build/
 /text/*.txt
 
 logs/
+text/

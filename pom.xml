@@ -17,9 +17,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.0</junit.version>
-        <log4j.version>2.20.0</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <mockito.version>5.5.0</mockito.version>
-        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <picocli.version>4.7.5</picocli.version>
     </properties>
 
     <dependencies>
@@ -70,6 +71,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>${picocli.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -105,7 +112,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.javarush.berezhnoy.presentation.cli.CliApp</mainClass>
+                            <mainClass>ru.javarush.berezhnoy.presentation.cli.CaesarCliApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
