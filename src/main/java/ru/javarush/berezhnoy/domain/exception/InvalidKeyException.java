@@ -1,7 +1,7 @@
 package ru.javarush.berezhnoy.domain.exception;
 
 /**
- * Исключение для невалидного ключа шифрования.
+ * Thrown when the encryption key is invalid.
  */
 public class InvalidKeyException extends CaesarCipherException {
 

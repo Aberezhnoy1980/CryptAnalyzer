@@ -28,17 +28,17 @@ public class BruteForceCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            System.out.println("🔓 Starting brute force attack...");
+            System.out.println("Starting brute force attack...");
 
             CipherServiceImpl service = new CipherServiceImpl();
             service.bruteForce(inputFile.toString(), outputFile.toString());
 
-            System.out.println("✅ Brute force completed!");
+            System.out.println("Brute force completed.");
             System.out.printf("   Decrypted file: %s%n", outputFile.toAbsolutePath());
 
             return 0;
         } catch (Exception e) {
-            System.err.println("❌ Brute force failed: " + e.getMessage());
+            System.err.println("Brute force failed: " + e.getMessage());
             return 1;
         }
     }

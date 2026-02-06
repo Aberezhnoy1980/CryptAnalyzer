@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 /**
- * Команда шифрования.
+ * Encrypt command.
  */
 @Command(
         name = "encrypt",
@@ -59,7 +59,7 @@ public class EncryptCommand implements Callable<Integer> {
                     inputFile, outputFile, key);
 
             if (verbose) {
-                System.out.printf("🔐 Encrypting %s with key %d...%n",
+                System.out.printf("Encrypting %s with key %d...%n",
                         inputFile.getFileName(), key);
             }
 
@@ -67,7 +67,7 @@ public class EncryptCommand implements Callable<Integer> {
             service.encrypt(inputFile.toString(), outputFile.toString(), key);
 
             if (verbose) {
-                System.out.println("✅ Encryption completed successfully!");
+                System.out.println("Encryption completed successfully.");
                 System.out.printf("   Input:  %s%n", inputFile.toAbsolutePath());
                 System.out.printf("   Output: %s%n", outputFile.toAbsolutePath());
                 System.out.printf("   Key:    %d%n", key);
@@ -75,14 +75,14 @@ public class EncryptCommand implements Callable<Integer> {
                 System.out.println("Encryption completed.");
             }
 
-            return 0; // Успех
+            return 0;
 
         } catch (CaesarCipherException | IllegalArgumentException e) {
-            System.err.println("❌ Error: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
             if (verbose) {
                 e.printStackTrace();
             }
-            return 1; // Ошибка
+            return 1;
         }
     }
 

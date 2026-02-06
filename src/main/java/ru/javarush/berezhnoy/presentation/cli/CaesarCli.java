@@ -12,7 +12,7 @@ import ru.javarush.berezhnoy.presentation.cli.commands.DecryptCommand;
 import ru.javarush.berezhnoy.presentation.cli.commands.EncryptCommand;
 
 /**
- * Основной CLI класс с подкомандами.
+ * Main CLI with subcommands (encrypt, decrypt, bruteforce, analyze).
  */
 @Command(
         name = "caesar",
@@ -35,7 +35,6 @@ public class CaesarCli implements Runnable {
 
     @Override
     public void run() {
-        // Если не указана команда - показываем помощь
         throw new CommandLine.ParameterException(
                 spec.commandLine(),
                 "Please specify a command. Use 'caesar --help' for available commands."

@@ -5,17 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Оптимизированный алфавит с гибридной стратегией поиска:
- * - O(1) для ASCII/BMP символов через массив
- * - O(1) для Unicode через HashMap
+ * Alphabet with O(1) lookup: array for BMP, HashMap for supplementary Unicode.
  */
 public class EnhancedAlphabet {
-    private static final int ASCII_LIMIT = 128; // Базовый ASCII
-    private static final int BMP_LIMIT = 65536; // Basic Multilingual Plane
+    private static final int ASCII_LIMIT = 128;
+    private static final int BMP_LIMIT = 65536;
 
     private final char[] symbols;
-    private final int[] charToIndex; // Для ASCII/BMP символов
-    private final Map<Character, Integer> unicodeMap; // Для Unicode > BMP
+    private final int[] charToIndex;
+    private final Map<Character, Integer> unicodeMap;
     private final int size;
 
     public EnhancedAlphabet(char[] symbols) {
@@ -26,7 +24,6 @@ public class EnhancedAlphabet {
         this.symbols = symbols.clone();
         this.size = symbols.length;
 
-        // Определяем нужен ли нам HashMap для Unicode
         boolean needsUnicodeMap = false;
         for (char c : symbols) {
             if (c >= BMP_LIMIT) {
@@ -37,10 +34,9 @@ public class EnhancedAlphabet {
 
         if (needsUnicodeMap) {
             unicodeMap = new HashMap<>();
-            charToIndex = new int[ASCII_LIMIT]; // Только для ASCII
+            charToIndex = new int[ASCII_LIMIT];
         } else {
             unicodeMap = null;
-            // Для BMP хватает массива
             int maxChar = 0;
             for (char c : symbols) {
                 if (c > maxChar) maxChar = c;
@@ -49,8 +45,6 @@ public class EnhancedAlphabet {
         }
 
         Arrays.fill(charToIndex, -1);
-
-        // Заполняем структуры данных
         for (int i = 0; i < size; i++) {
             char symbol = symbols[i];
             if (symbol < charToIndex.length) {
@@ -70,7 +64,6 @@ public class EnhancedAlphabet {
         return -1;
     }
 
-    // Остальные методы без изменений...
     public char getSymbol(int index) {
         int normalizedIndex = ((index % size) + size) % size;
         return symbols[normalizedIndex];

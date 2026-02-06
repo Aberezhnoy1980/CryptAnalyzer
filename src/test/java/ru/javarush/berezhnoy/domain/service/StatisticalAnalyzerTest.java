@@ -30,9 +30,8 @@ public class StatisticalAnalyzerTest {
         inputFile = tempDir.resolve("input.txt");
         encryptedFile = tempDir.resolve("encrypted.txt");
         decryptedFile = tempDir.resolve("decrypted.txt");
-        referenceFile = tempDir.resolve("reference.txt"); // ← ДОБАВЛЯЕМ
+        referenceFile = tempDir.resolve("reference.txt");
 
-        // Создаём тестовый файл
         String originalText = """
                 Привет, мир! Это тестовый текст для проверки шифра Цезаря.
                 Шифр Цезаря — один из самых простых и известных шифров.
@@ -58,7 +57,6 @@ public class StatisticalAnalyzerTest {
 
         Files.writeString(inputFile, originalText);
 
-        // Образцовый текст тоже должен быть большим
         String referenceText = """
                 Криптография — наука о методах обеспечения конфиденциальности,
                 целостности данных, аутентификации и невозможности отказа от авторства.
@@ -92,28 +90,18 @@ public class StatisticalAnalyzerTest {
 
     @Test
     void testStatisticalAnalysis() throws Exception {
-        // Шифруем с известным ключом
         int testKey = 5;
         service.encrypt(inputFile.toString(), encryptedFile.toString(), testKey);
 
-        // Анализируем БЕЗ знания ключа, но с образцовым текстом
         service.statisticalAnalysis(
                 encryptedFile.toString(),
                 decryptedFile.toString(),
-                referenceFile.toString()  // ← используем образцовый текст
+                referenceFile.toString()
         );
 
-        // Проверяем что что-то расшифровалось
         assertTrue(Files.exists(decryptedFile));
-
         String decrypted = Files.readString(decryptedFile);
 
-        // Статистический анализ может не угадать точно,
-        // но должен дать осмысленный текст
-        System.out.println("Decrypted by statistical analysis: " + decrypted);
-
-        // Хотя бы некоторые слова должны быть узнаваемы
-        // (тест может быть нестабильным, но для демо сойдёт)
         boolean hasRecognizableText =
                 decrypted.contains("Привет") ||
                         decrypted.contains("мир") ||
@@ -125,7 +113,6 @@ public class StatisticalAnalyzerTest {
 
     @Test
     void testStatisticalAnalysisWithSmallKey() throws Exception {
-        // Используем маленький ключ для повышения точности анализа
         int testKey = 3;
         service.encrypt(inputFile.toString(), encryptedFile.toString(), testKey);
 
@@ -136,33 +123,22 @@ public class StatisticalAnalyzerTest {
         );
 
         String decrypted = Files.readString(decryptedFile);
-
-        // Логируем для отладки
-        logger.info("Original: {}", Files.readString(inputFile));
-        logger.info("Decrypted by stats: {}", decrypted);
-
-        // При маленьком ключе и хорошем образце должен угадать
-        // Но если нет - тест не падает, только предупреждение
         if (!decrypted.equals(Files.readString(inputFile))) {
-            logger.warn("Statistical analysis didn't find exact key, but that's okay for demo");
+            logger.warn("Statistical analysis did not find exact key");
         }
     }
 
     @Test
     void testStatisticalAnalysisWithoutReference() throws Exception {
-        // Тестируем частотный анализ без образцового текста
-        int testKey = 1; // Маленький ключ для пробела
-
+        int testKey = 1;
         service.encrypt(inputFile.toString(), encryptedFile.toString(), testKey);
 
-        // Передаём null как referencePath
         service.statisticalAnalysis(
                 encryptedFile.toString(),
                 decryptedFile.toString(),
-                null  // ← без образца
+                null
         );
 
-        // Проверяем что файл создался
         assertTrue(Files.exists(decryptedFile));
     }
 }

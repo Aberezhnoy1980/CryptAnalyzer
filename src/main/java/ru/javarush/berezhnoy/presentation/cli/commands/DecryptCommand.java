@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 /**
- * Команда шифрования.
+ * Decrypt command (known key).
  */
 @Command(
         name = "decrypt",
@@ -39,7 +39,7 @@ public class DecryptCommand implements Callable<Integer> {
     @Option(
             names = {"-k", "--key"},
             required = true,
-            description = "decryption key (shift value)",
+            description = "Decryption key (shift value)",
             paramLabel = "KEY"
     )
     private int key;
@@ -59,7 +59,7 @@ public class DecryptCommand implements Callable<Integer> {
                     inputFile, outputFile, key);
 
             if (verbose) {
-                System.out.printf("🔐 decrypting %s with key %d...%n",
+                System.out.printf("Decrypting %s with key %d...%n",
                         inputFile.getFileName(), key);
             }
 
@@ -67,22 +67,22 @@ public class DecryptCommand implements Callable<Integer> {
             service.decrypt(inputFile.toString(), outputFile.toString(), key);
 
             if (verbose) {
-                System.out.println("✅ decryption completed successfully!");
+                System.out.println("Decryption completed successfully.");
                 System.out.printf("   Input:  %s%n", inputFile.toAbsolutePath());
                 System.out.printf("   Output: %s%n", outputFile.toAbsolutePath());
                 System.out.printf("   Key:    %d%n", key);
             } else {
-                System.out.println("decryption completed.");
+                System.out.println("Decryption completed.");
             }
 
-            return 0; // Успех
+            return 0;
 
         } catch (CaesarCipherException | IllegalArgumentException e) {
-            System.err.println("❌ Error: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
             if (verbose) {
                 e.printStackTrace();
             }
-            return 1; // Ошибка
+            return 1;
         }
     }
 
