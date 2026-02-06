@@ -37,3 +37,6 @@ build/
 
 ### Demo result ###
 /text/*.txt
+
+logs/
+text/
