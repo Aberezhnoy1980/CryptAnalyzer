@@ -2,6 +2,7 @@ package ru.javarush.berezhnoy.infrastructure.io;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.javarush.berezhnoy.domain.port.FileProcessor;
 import ru.javarush.berezhnoy.infrastructure.config.ApplicationConfig;
 import ru.javarush.berezhnoy.infrastructure.config.SecurityConfig;
 
@@ -21,7 +22,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * Chunk-based file processor using NIO for large files.
  */
-public class EfficientFileProcessor {
+public class EfficientFileProcessor implements FileProcessor {
     private static final Logger logger = LogManager.getLogger(EfficientFileProcessor.class);
 
     private static final String PROP_BUFFER_SIZE_KB = "caesar.buffer.size.kb";
@@ -123,8 +124,9 @@ public class EfficientFileProcessor {
         }
     }
 
+    @Override
     public void processFileByChunks(String inputPath, String outputPath,
-                                    CharProcessor processor) throws IOException {
+                                    FileProcessor.CharProcessor processor) throws IOException {
 
         validatePaths(inputPath, outputPath);
 
@@ -179,7 +181,7 @@ public class EfficientFileProcessor {
         }
     }
 
-    private void processCharBuffer(CharBuffer buffer, CharProcessor processor) {
+    private void processCharBuffer(CharBuffer buffer, FileProcessor.CharProcessor processor) {
         while (buffer.hasRemaining()) {
             char original = buffer.get();
             char processed = processor.process(original);
@@ -205,10 +207,5 @@ public class EfficientFileProcessor {
         if (SecurityConfig.isPathProtected(outputPath) || SecurityConfig.isExtensionBlocked(outputPath)) {
             throw new SecurityException("Cannot write to system protected location: " + outputPath);
         }
-    }
-
-    @FunctionalInterface
-    public interface CharProcessor {
-        char process(char input);
     }
 }
