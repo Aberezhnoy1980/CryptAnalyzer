@@ -1,7 +1,7 @@
 package ru.javarush.berezhnoy.domain.model;
 
 import ru.javarush.berezhnoy.domain.exception.InvalidKeyException;
-import ru.javarush.berezhnoy.infrastructure.io.EfficientFileProcessor;
+import ru.javarush.berezhnoy.domain.port.FileProcessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,18 +14,17 @@ public class CaesarCipher {
     private static final Logger logger = LogManager.getLogger(CaesarCipher.class);
 
     private final EnhancedAlphabet alphabet;
-    private final EfficientFileProcessor fileProcessor;
+    private final FileProcessor fileProcessor;
 
-    public CaesarCipher(EnhancedAlphabet alphabet) {
-        this(alphabet, new EfficientFileProcessor());
-    }
-
-    public CaesarCipher(EnhancedAlphabet alphabet, EfficientFileProcessor fileProcessor) {
+    public CaesarCipher(EnhancedAlphabet alphabet, FileProcessor fileProcessor) {
         if (alphabet == null) {
             throw new IllegalArgumentException("Alphabet cannot be null");
         }
+        if (fileProcessor == null) {
+            throw new IllegalArgumentException("FileProcessor cannot be null");
+        }
         this.alphabet = alphabet;
-        this.fileProcessor = fileProcessor != null ? fileProcessor : new EfficientFileProcessor();
+        this.fileProcessor = fileProcessor;
         logger.debug("CaesarCipher initialized with alphabet size: {}", alphabet.getSize());
     }
 

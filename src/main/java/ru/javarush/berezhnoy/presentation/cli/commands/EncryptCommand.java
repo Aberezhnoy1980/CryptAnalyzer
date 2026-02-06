@@ -1,10 +1,12 @@
 package ru.javarush.berezhnoy.presentation.cli.commands;
 
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Option;
-import ru.javarush.berezhnoy.application.service.CipherServiceImpl;
+import picocli.CommandLine.Parameters;
+import picocli.CommandLine.ParentCommand;
 import ru.javarush.berezhnoy.domain.exception.CaesarCipherException;
+import ru.javarush.berezhnoy.domain.service.CipherService;
+import ru.javarush.berezhnoy.presentation.cli.CaesarCli;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +23,9 @@ import java.util.concurrent.Callable;
 )
 public class EncryptCommand implements Callable<Integer> {
     private static final Logger logger = LogManager.getLogger(EncryptCommand.class);
+
+    @ParentCommand
+    private CaesarCli parent;
 
     @Parameters(
             index = "0",
@@ -63,7 +68,7 @@ public class EncryptCommand implements Callable<Integer> {
                         inputFile.getFileName(), key);
             }
 
-            CipherServiceImpl service = new CipherServiceImpl();
+            CipherService service = parent.getCipherService();
             service.encrypt(inputFile.toString(), outputFile.toString(), key);
 
             if (verbose) {

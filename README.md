@@ -1,76 +1,50 @@
-git # Итоговый проект первого модуля курса JavaRush
-
-[Техническое задание и рекомендации](Technical_specification.md)
-
 # Caesar Cipher Application
+
+Итоговый проект первого модуля курса JavaRush. Реализация шифра Цезаря с несколькими режимами работы.
+
+[Техническое задание и рекомендации](Technical_specification.md) · [Архитектура и компоненты](ARCHITECTURE.md)
 
 [![Java CI](https://github.com/Aberezhnoy1980/CryptAnalyzer/actions/workflows/build.yml/badge.svg)](https://github.com/Aberezhnoy1980/CryptAnalyzer/actions/workflows/build.yml)
 [![Java Version](https://img.shields.io/badge/Java-21-blue.svg)](https://openjdk.org/projects/jdk/21/)
 [![Maven](https://img.shields.io/badge/Maven-3.9%2B-orange.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Профессиональная реализация шифра Цезаря с поддержкой нескольких режимов работы.
+## Режимы работы
 
-## Архитектурные решения
+- **Шифрование** — файл + ключ (сдвиг) → зашифрованный файл  
+- **Расшифровка по ключу** — зашифрованный файл + ключ → исходный текст  
+- **Bruteforce** — перебор ключей с оценкой «похожести на язык»  
+- **Статистический анализ** — подбор ключа по частоте символов (опционально с эталонным текстом)
 
-### 1. Многослойная архитектура
-Проект разделен на 4 слоя:
-- **Presentation Layer** - взаимодействие с пользователем (CLI, в будущем GUI/Web)
-- **Application Layer** - оркестрация бизнес-логики, команды
-- **Domain Layer** - ядро системы, бизнес-логика и модели
-- **Infrastructure Layer** - технические детали (файлы, логирование)
+Запуск: `java -jar target/cryptanalyzer-1.0-SNAPSHOT-jar-with-dependencies.jar <команда> ...`  
+Справка: `caesar --help`, `caesar encrypt --help` и т.д.
 
-### 2. Принципы SOLID
-- **Single Responsibility** - каждый класс имеет одну причину для изменения
-- **Open/Closed** - расширяемость через интерфейсы
-- **Liskov Substitution** - корректное наследование
-- **Interface Segregation** - узкоспециализированные интерфейсы
-- **Dependency Inversion** - зависимости от абстракций
+## Архитектура (кратко)
 
-### 3. Паттерны проектирования
-- **Strategy** - алгоритмы шифрования/дешифрования
-- **Command** - инкапсуляция операций
-- **Factory** - создание объектов
-- **Template Method** - общие шаги алгоритмов
+Четыре слоя: **Presentation** (CLI) → **Application** (оркестрация) → **Domain** (логика шифра, brute force, статистика) ← **Infrastructure** (файлы, конфиг).
 
-### 4. Конфигурация
-- **Централизованная конфигурация** через `ApplicationConfig`
-- **Безопасность**: проверка системных путей и запрещённых расширений
-- **Производительность**: настраиваемый размер буфера (по умолчанию 32KB)
+Domain не зависит от Infrastructure: в domain объявлены порты **FileProcessor** и **AlphabetProvider**, их реализации (EfficientFileProcessor, AlphabetConfigProvider) живут в infrastructure. Сборка зависимостей выполняется в **CaesarCliApp** (composition root): создаются провайдер алфавита и файловый процессор, затем ими инициализируется CipherService и передаётся в CLI.
 
-### 5. Оптимизации
-- **EnhancedAlphabet**: гибридный поиск (массив + HashMap) для O(1) доступа
-- **EfficientFileProcessor**: чанковая обработка файлов с NIO FileChannel
-- **Кэширование**: ленивая загрузка и кэширование конфигурации
+Подробнее: схема слоёв, диаграмма компонентов и связи между ними — в [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## Производительность
+## Технологии и конфигурация
 
-### Работа с большими файлами
-- Использование Java NIO для эффективного I/O
-- Потоковая обработка через Stream API
-- Буферизация с настраиваемым размером буфера
-- Прогрессивная обработка без загрузки всего файла в память
+- **Java 21**, Maven  
+- **Конфигурация**: `application.properties` + системные свойства; алфавит, буфер, кодировка, защищённые пути — см. `ApplicationConfig`, `AlphabetConfig`, `SecurityConfig`.  
+- **Логирование**: Log4j2; в консоль идёт только INFO и выше, в файл `logs/caesar-cipher.log` — в т.ч. DEBUG.  
+- **Производительность**: NIO, чанковая обработка файлов, алфавит с O(1) поиском (EnhancedAlphabet).
 
-### Алфавит и контейнеры
-Выбор структуры данных для алфавита основан на:
-1. **Частота операций поиска** - HashMap для O(1) поиска символа
-2. **Иммутабельность** - final константы
-3. **Производительность** - массивы char для основной операции сдвига
+## Сборка и тесты
 
-## CI/CD Pipeline
-- GitHub Actions для автоматизации
-- Unit тесты при каждом коммите
-- Сборка JAR при мерже в main
-- Проверка покрытия кода
+```bash
+mvn clean package
+mvn test
+```
 
-## Разработка
-Разработка ведется по методологии инкрементального развития:
-1. Базовые структуры и шифрование
-2. Работа с файлами
-3. Bruteforce и статистический анализ
-4. CLI интерфейс
-5. Логирование и документирование
+## CI/CD
 
-<hr>
+GitHub Actions: сборка и тесты на push/PR в `dev` и `main`.
+
+---
 
 Исполнитель: Бережной А.

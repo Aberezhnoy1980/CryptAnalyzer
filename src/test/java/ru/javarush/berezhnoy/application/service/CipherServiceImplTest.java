@@ -4,6 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import ru.javarush.berezhnoy.domain.exception.CaesarCipherException;
+import ru.javarush.berezhnoy.domain.port.AlphabetProvider;
+import ru.javarush.berezhnoy.domain.port.FileProcessor;
+import ru.javarush.berezhnoy.infrastructure.config.AlphabetConfigProvider;
+import ru.javarush.berezhnoy.infrastructure.io.EfficientFileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +26,9 @@ class CipherServiceImplTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        service = new CipherServiceImpl();
+        AlphabetProvider alphabetProvider = new AlphabetConfigProvider();
+        FileProcessor fileProcessor = new EfficientFileProcessor();
+        service = new CipherServiceImpl(alphabetProvider, fileProcessor);
 
         inputFile = tempDir.resolve("input.txt");
         encryptedFile = tempDir.resolve("encrypted.txt");

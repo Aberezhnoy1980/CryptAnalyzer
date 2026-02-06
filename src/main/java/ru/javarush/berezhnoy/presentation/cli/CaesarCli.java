@@ -6,6 +6,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Spec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.javarush.berezhnoy.domain.service.CipherService;
 import ru.javarush.berezhnoy.presentation.cli.commands.AnalyzeCommand;
 import ru.javarush.berezhnoy.presentation.cli.commands.BruteForceCommand;
 import ru.javarush.berezhnoy.presentation.cli.commands.DecryptCommand;
@@ -32,6 +33,16 @@ public class CaesarCli implements Runnable {
 
     @Spec
     CommandSpec spec;
+
+    private CipherService cipherService;
+
+    public CipherService getCipherService() {
+        return cipherService;
+    }
+
+    public void setCipherService(CipherService cipherService) {
+        this.cipherService = cipherService;
+    }
 
     @Override
     public void run() {

@@ -1,25 +1,24 @@
 package ru.javarush.berezhnoy.domain.model;
 
-import ru.javarush.berezhnoy.infrastructure.config.AlphabetConfig;
+import ru.javarush.berezhnoy.domain.port.AlphabetProvider;
 
 /**
- * Factory for creating alphabets from config or custom strings.
+ * Factory for creating alphabets (from a provider or custom symbols).
  */
 public class AlphabetFactory {
 
-    public static EnhancedAlphabet createFromConfig() {
-        String alphabetType = AlphabetConfig.getAlphabetType();
-        return createAlphabet(alphabetType);
+    public static EnhancedAlphabet createFromConfig(AlphabetProvider provider) {
+        if (provider == null) {
+            throw new IllegalArgumentException("AlphabetProvider cannot be null");
+        }
+        return provider.getDefaultAlphabet();
     }
 
-    public static EnhancedAlphabet createAlphabet(String alphabetType) {
-        String fullAlphabet = AlphabetConfig.getFullAlphabet(alphabetType);
-
-        if (fullAlphabet.isEmpty()) {
-            throw new IllegalArgumentException("No alphabet configured for type: " + alphabetType);
+    public static EnhancedAlphabet createAlphabet(AlphabetProvider provider, String alphabetType) {
+        if (provider == null) {
+            throw new IllegalArgumentException("AlphabetProvider cannot be null");
         }
-
-        return new EnhancedAlphabet(fullAlphabet.toCharArray());
+        return provider.getAlphabet(alphabetType);
     }
 
     public static EnhancedAlphabet createCustomAlphabet(String symbols) {
@@ -27,13 +26,5 @@ public class AlphabetFactory {
             throw new IllegalArgumentException("Symbols cannot be null or empty");
         }
         return new EnhancedAlphabet(symbols.toCharArray());
-    }
-
-    public static EnhancedAlphabet createRussianAlphabet() {
-        return createAlphabet("russian");
-    }
-
-    public static EnhancedAlphabet createEnglishAlphabet() {
-        return createAlphabet("english");
     }
 }

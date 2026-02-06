@@ -5,8 +5,10 @@ import org.apache.logging.log4j.Logger;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
-import ru.javarush.berezhnoy.application.service.CipherServiceImpl;
+import picocli.CommandLine.ParentCommand;
 import ru.javarush.berezhnoy.domain.exception.CaesarCipherException;
+import ru.javarush.berezhnoy.domain.service.CipherService;
+import ru.javarush.berezhnoy.presentation.cli.CaesarCli;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +23,9 @@ import java.util.concurrent.Callable;
 )
 public class DecryptCommand implements Callable<Integer> {
     private static final Logger logger = LogManager.getLogger(DecryptCommand.class);
+
+    @ParentCommand
+    private CaesarCli parent;
 
     @Parameters(
             index = "0",
@@ -63,7 +68,7 @@ public class DecryptCommand implements Callable<Integer> {
                         inputFile.getFileName(), key);
             }
 
-            CipherServiceImpl service = new CipherServiceImpl();
+            CipherService service = parent.getCipherService();
             service.decrypt(inputFile.toString(), outputFile.toString(), key);
 
             if (verbose) {

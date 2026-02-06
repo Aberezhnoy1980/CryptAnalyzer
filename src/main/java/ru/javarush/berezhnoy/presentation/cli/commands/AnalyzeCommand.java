@@ -1,9 +1,11 @@
 package ru.javarush.berezhnoy.presentation.cli.commands;
 
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Option;
-import ru.javarush.berezhnoy.application.service.CipherServiceImpl;
+import picocli.CommandLine.Parameters;
+import picocli.CommandLine.ParentCommand;
+import ru.javarush.berezhnoy.domain.service.CipherService;
+import ru.javarush.berezhnoy.presentation.cli.CaesarCli;
 
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -16,6 +18,9 @@ import java.util.concurrent.Callable;
         description = "Decrypt a file using statistical analysis"
 )
 public class AnalyzeCommand implements Callable<Integer> {
+    @ParentCommand
+    private CaesarCli parent;
+
     @Parameters(paramLabel = "INPUT", description = "Encrypted input file")
     private Path inputFile;
 
@@ -37,7 +42,7 @@ public class AnalyzeCommand implements Callable<Integer> {
         try {
             System.out.println("Starting statistical analysis...");
 
-            CipherServiceImpl service = new CipherServiceImpl();
+            CipherService service = parent.getCipherService();
             String referencePath = referenceFile != null ? referenceFile.toString() : null;
 
             service.statisticalAnalysis(
