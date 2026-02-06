@@ -8,8 +8,7 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * Централизованная конфигурация приложения.
- * Все настройки только из properties файлов.
+ * Centralized application configuration (properties).
  */
 public class ApplicationConfig {
     private static final Logger logger = LogManager.getLogger(ApplicationConfig.class);
@@ -20,10 +19,7 @@ public class ApplicationConfig {
     }
 
     private static void loadConfiguration() {
-        // 1. Загружаем дефолтные настройки из класса
         setDefaultProperties();
-
-        // 2. Переопределяем из файла
         try (InputStream input = ApplicationConfig.class.getClassLoader()
                 .getResourceAsStream("application.properties")) {
 
@@ -34,13 +30,10 @@ public class ApplicationConfig {
         } catch (IOException e) {
             logger.warn("Could not load application.properties, using defaults", e);
         }
-
-        // 3. Переопределяем системными свойствами (для тестов/оверрайдов)
         properties.putAll(System.getProperties());
     }
 
     private static void setDefaultProperties() {
-        // Алфавиты
         properties.setProperty("caesar.alphabet.type", "russian");
         properties.setProperty("caesar.alphabet.russian.letters",
                 "абвгдеёжзийклмнопрстуфхцчшщъыьэюя");
@@ -49,17 +42,14 @@ public class ApplicationConfig {
         properties.setProperty("caesar.alphabet.digits", "0123456789");
         properties.setProperty("caesar.alphabet.special", " .,!?:;-()\"'«»—…");
 
-        // Производительность
         properties.setProperty("caesar.buffer.size.kb", "32");
         properties.setProperty("caesar.file.encoding", "UTF-8");
 
-        // Безопасность
         properties.setProperty("caesar.security.protected.paths",
                 "/etc/|/bin/|/sbin/|/windows/|/system32/|/program files/|C:\\Windows\\|C:\\Program Files\\");
         properties.setProperty("caesar.security.blocked.extensions",
                 ".exe|.dll|.sys|.bat|.sh|.bash");
 
-        // Логирование
         properties.setProperty("caesar.logging.level", "INFO");
     }
 
@@ -90,7 +80,6 @@ public class ApplicationConfig {
         return Arrays.asList(value.split(delimiter));
     }
 
-    // Для тестирования
     static void setProperty(String key, String value) {
         properties.setProperty(key, value);
     }

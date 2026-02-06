@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 /**
- * Реализация шифра Цезаря с поддержкой файловой обработки.
+ * Caesar cipher implementation with file and string processing.
  */
 public class CaesarCipher {
     private static final Logger logger = LogManager.getLogger(CaesarCipher.class);
@@ -30,7 +30,7 @@ public class CaesarCipher {
     }
 
     /**
-     * Шифрует файл.
+     * Encrypts file from inputPath to outputPath using the given key.
      */
     public void encryptFile(String inputPath, String outputPath, int key) throws IOException, InvalidKeyException {
         validateKey(key);
@@ -41,7 +41,7 @@ public class CaesarCipher {
     }
 
     /**
-     * Дешифрует файл.
+     * Decrypts file from inputPath to outputPath using the given key.
      */
     public void decryptFile(String inputPath, String outputPath, int key) throws IOException, InvalidKeyException {
         validateKey(key);
@@ -52,7 +52,7 @@ public class CaesarCipher {
     }
 
     /**
-     * Шифрует символ.
+     * Encrypts a single character.
      */
     public char encryptChar(char inputChar, int key) {
         int index = alphabet.indexOf(inputChar);
@@ -64,14 +64,14 @@ public class CaesarCipher {
     }
 
     /**
-     * Дешифрует символ.
+     * Decrypts a single character.
      */
     public char decryptChar(char inputChar, int key) {
         return encryptChar(inputChar, -key);
     }
 
     /**
-     * Шифрует строку.
+     * Encrypts a string.
      */
     public String encryptString(String input, int key) throws InvalidKeyException {
         validateKey(key);
@@ -82,29 +82,24 @@ public class CaesarCipher {
             result.append(encryptChar(input.charAt(i), key));
         }
 
-        logger.debug("Encrypted string of length {} with key {}", input.length(), key);
         return result.toString();
     }
 
     /**
-     * Дешифрует строку.
+     * Decrypts a string.
      */
     public String decryptString(String input, int key) throws InvalidKeyException {
         return encryptString(input, -key);
     }
 
     /**
-     * Проверяет валидность ключа.
+     * Validates key; logs warnings for edge cases (0, Integer.MIN_VALUE).
      */
     public void validateKey(int key) throws InvalidKeyException {
-        // В шифре Цезаря любой int валиден
-        // Но проверяем на крайние случаи
         if (key == 0) {
             logger.warn("Key is 0 - no encryption/decryption will be performed");
         }
-
         if (key == Integer.MIN_VALUE) {
-            // Особый случай при инверсии
             logger.warn("Key is Integer.MIN_VALUE, may cause overflow in calculations");
         }
     }

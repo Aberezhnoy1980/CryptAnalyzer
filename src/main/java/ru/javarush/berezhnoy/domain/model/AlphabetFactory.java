@@ -3,21 +3,15 @@ package ru.javarush.berezhnoy.domain.model;
 import ru.javarush.berezhnoy.infrastructure.config.AlphabetConfig;
 
 /**
- * Фабрика для создания алфавитов на основе конфигурации.
+ * Factory for creating alphabets from config or custom strings.
  */
 public class AlphabetFactory {
 
-    /**
-     * Создаёт алфавит на основе конфигурации.
-     */
     public static EnhancedAlphabet createFromConfig() {
         String alphabetType = AlphabetConfig.getAlphabetType();
         return createAlphabet(alphabetType);
     }
 
-    /**
-     * Создаёт алфавит указанного типа.
-     */
     public static EnhancedAlphabet createAlphabet(String alphabetType) {
         String fullAlphabet = AlphabetConfig.getFullAlphabet(alphabetType);
 
@@ -28,9 +22,6 @@ public class AlphabetFactory {
         return new EnhancedAlphabet(fullAlphabet.toCharArray());
     }
 
-    /**
-     * Создаёт кастомный алфавит из строки символов.
-     */
     public static EnhancedAlphabet createCustomAlphabet(String symbols) {
         if (symbols == null || symbols.isEmpty()) {
             throw new IllegalArgumentException("Symbols cannot be null or empty");
@@ -38,16 +29,10 @@ public class AlphabetFactory {
         return new EnhancedAlphabet(symbols.toCharArray());
     }
 
-    /**
-     * Создаёт русский алфавит (удобный shortcut).
-     */
     public static EnhancedAlphabet createRussianAlphabet() {
         return createAlphabet("russian");
     }
 
-    /**
-     * Создаёт английский алфавит (удобный shortcut).
-     */
     public static EnhancedAlphabet createEnglishAlphabet() {
         return createAlphabet("english");
     }

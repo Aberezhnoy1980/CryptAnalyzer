@@ -19,17 +19,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Высокопроизводительный процессор файлов с чанковой обработкой.
- * Использует Java NIO для эффективной работы с большими файлами.
+ * Chunk-based file processor using NIO for large files.
  */
 public class EfficientFileProcessor {
     private static final Logger logger = LogManager.getLogger(EfficientFileProcessor.class);
 
-    // Константы для имён свойств
     private static final String PROP_BUFFER_SIZE_KB = "caesar.buffer.size.kb";
     private static final String PROP_FILE_ENCODING = "caesar.file.encoding";
 
-    // Дефолтные значения
     private static final int DEFAULT_BUFFER_SIZE_KB = 32;
     private static final String DEFAULT_ENCODING = "UTF-8";
     private static final int MIN_BUFFER_SIZE_KB = 4;
@@ -38,9 +35,6 @@ public class EfficientFileProcessor {
     private final int bufferSize;
     private final Charset charset;
 
-    /**
-     * Создаёт процессор с настройками из конфигурации.
-     */
     public EfficientFileProcessor() {
         this.bufferSize = getConfiguredBufferSize();
         this.charset = getConfiguredCharset();
@@ -48,9 +42,6 @@ public class EfficientFileProcessor {
                 bufferSize, charset.name());
     }
 
-    /**
-     * Создаёт процессор с кастомными настройками.
-     */
     public EfficientFileProcessor(int bufferSizeBytes, Charset charset) {
         validateBufferSize(bufferSizeBytes);
         validateCharset(charset);
@@ -62,13 +53,10 @@ public class EfficientFileProcessor {
 
     private int getConfiguredBufferSize() {
         try {
-            // Читаем из конфига
             int sizeKB = ApplicationConfig.getIntProperty(
                     PROP_BUFFER_SIZE_KB,
                     DEFAULT_BUFFER_SIZE_KB
             );
-
-            // Валидация
             if (sizeKB < MIN_BUFFER_SIZE_KB) {
                 logger.warn("Buffer size too small ({}KB), using {}KB",
                         sizeKB, MIN_BUFFER_SIZE_KB);
@@ -78,9 +66,7 @@ public class EfficientFileProcessor {
                         sizeKB, MAX_BUFFER_SIZE_KB);
                 sizeKB = MAX_BUFFER_SIZE_KB;
             }
-
-            return sizeKB * 1024; // Конвертируем в байты
-
+            return sizeKB * 1024;
         } catch (Exception e) {
             logger.error("Failed to read buffer size from config, using default", e);
             return DEFAULT_BUFFER_SIZE_KB * 1024;
@@ -123,8 +109,6 @@ public class EfficientFileProcessor {
         if (charset == null) {
             throw new IllegalArgumentException("Charset cannot be null");
         }
-
-        // Проверяем поддержку кодировки
         String[] supportedEncodings = {"UTF-8", "UTF-16", "Windows-1251", "ISO-8859-1"};
         boolean isSupported = false;
         for (String supported : supportedEncodings) {
@@ -139,14 +123,6 @@ public class EfficientFileProcessor {
         }
     }
 
-    /**
-     * Обрабатывает файл порциями (чанками) для экономии памяти.
-     *
-     * @param inputPath  путь к входному файлу
-     * @param outputPath путь к выходному файлу
-     * @param processor  процессор для обработки каждого символа
-     * @throws IOException если произошла ошибка ввода-вывода
-     */
     public void processFileByChunks(String inputPath, String outputPath,
                                     CharProcessor processor) throws IOException {
 
@@ -154,9 +130,9 @@ public class EfficientFileProcessor {
 
         Path inPath = Paths.get(inputPath);
         Path outPath = Paths.get(outputPath);
-
-        // Создаём родительские директории если нужно
-        Files.createDirectories(outPath.getParent());
+        if (outPath.getParent() != null) {
+            Files.createDirectories(outPath.getParent());
+        }
 
         try (FileChannel inputChannel = FileChannel.open(inPath, StandardOpenOption.READ);
              FileChannel outputChannel = FileChannel.open(outPath,
@@ -166,7 +142,7 @@ public class EfficientFileProcessor {
             CharsetDecoder decoder = charset.newDecoder();
             CharsetEncoder encoder = charset.newEncoder();
             ByteBuffer byteBuffer = ByteBuffer.allocateDirect(bufferSize);
-            CharBuffer charBuffer = CharBuffer.allocate(bufferSize / 2); // примерный размер
+            CharBuffer charBuffer = CharBuffer.allocate(bufferSize / 2);
 
             long totalBytes = inputChannel.size();
             long processedBytes = 0;
@@ -176,29 +152,19 @@ public class EfficientFileProcessor {
 
             while (inputChannel.read(byteBuffer) != -1) {
                 byteBuffer.flip();
-
-                // Декодируем байты в символы
                 decoder.decode(byteBuffer, charBuffer, false);
                 charBuffer.flip();
-
-                // Обрабатываем символы
                 processCharBuffer(charBuffer, processor);
-
-                // Кодируем обратно в байты
                 charBuffer.flip();
                 ByteBuffer outputBuffer = encoder.encode(charBuffer);
-
-                // Пишем в выходной файл
                 while (outputBuffer.hasRemaining()) {
                     outputChannel.write(outputBuffer);
                 }
-
-                // Подготавливаем буферы для следующей порции
                 byteBuffer.clear();
                 charBuffer.clear();
 
                 processedBytes += bufferSize;
-                if (processedBytes % (10 * 1024 * 1024) == 0) { // Каждые 10MB логируем
+                if (processedBytes % (10 * 1024 * 1024) == 0) {
                     logger.debug("Processed {} of {} bytes ({}%)",
                             processedBytes, totalBytes,
                             (processedBytes * 100 / totalBytes));
@@ -213,23 +179,15 @@ public class EfficientFileProcessor {
         }
     }
 
-    /**
-     * Обрабатывает буфер символов.
-     */
     private void processCharBuffer(CharBuffer buffer, CharProcessor processor) {
         while (buffer.hasRemaining()) {
             char original = buffer.get();
             char processed = processor.process(original);
-
-            // Возвращаем обработанный символ на то же место
             buffer.position(buffer.position() - 1);
             buffer.put(processed);
         }
     }
 
-    /**
-     * Проверяет валидность путей файлов.
-     */
     private void validatePaths(String inputPath, String outputPath) throws IOException {
         if (inputPath == null || outputPath == null) {
             throw new IllegalArgumentException("File paths cannot be null");
@@ -244,15 +202,11 @@ public class EfficientFileProcessor {
             throw new IOException("Input file is not readable: " + inputPath);
         }
 
-        // Защита от перезаписи системных файлов
         if (SecurityConfig.isPathProtected(outputPath) || SecurityConfig.isExtensionBlocked(outputPath)) {
             throw new SecurityException("Cannot write to system protected location: " + outputPath);
         }
     }
 
-    /**
-     * Интерфейс для обработки символов.
-     */
     @FunctionalInterface
     public interface CharProcessor {
         char process(char input);

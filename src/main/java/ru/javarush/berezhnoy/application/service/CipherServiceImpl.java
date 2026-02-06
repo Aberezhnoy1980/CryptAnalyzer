@@ -49,7 +49,6 @@ public class CipherServiceImpl implements CipherService {
     @Override
     public void bruteForce(String inputPath, String outputPath)
             throws CaesarCipherException {
-        // TODO: реализовать в этом же коммите или следующем
         try {
             BruteForceDecryptor decryptor = new BruteForceDecryptor(cipher);
             decryptor.bruteForceFile(inputPath, outputPath);

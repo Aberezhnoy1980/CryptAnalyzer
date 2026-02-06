@@ -35,12 +35,10 @@ public class AnalyzeCommand implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            System.out.println("📊 Starting statistical analysis...");
+            System.out.println("Starting statistical analysis...");
 
             CipherServiceImpl service = new CipherServiceImpl();
-
-            String referencePath = referenceFile != null ?
-                    referenceFile.toString() : null;
+            String referencePath = referenceFile != null ? referenceFile.toString() : null;
 
             service.statisticalAnalysis(
                     inputFile.toString(),
@@ -48,7 +46,7 @@ public class AnalyzeCommand implements Callable<Integer> {
                     referencePath
             );
 
-            System.out.println("✅ Statistical analysis completed!");
+            System.out.println("Statistical analysis completed.");
             System.out.printf("   Decrypted file: %s%n", outputFile.toAbsolutePath());
             if (referenceFile != null) {
                 System.out.printf("   Used reference: %s%n", referenceFile.toAbsolutePath());
@@ -56,7 +54,7 @@ public class AnalyzeCommand implements Callable<Integer> {
 
             return 0;
         } catch (Exception e) {
-            System.err.println("❌ Statistical analysis failed: " + e.getMessage());
+            System.err.println("Statistical analysis failed: " + e.getMessage());
             return 1;
         }
     }
